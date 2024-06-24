@@ -13,38 +13,41 @@ class _NewPageState extends State<NewPage> {
   _NewPageState(this.colgname);
   @override
   Widget build(BuildContext context) {
-    var deftextstyle = TextStyle(fontSize: 30);
     var namelist = ['kaqwla', 'amala', 'kalaa'];
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'maala',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Color.fromARGB(255, 234, 85, 209), fontSize: 30),
-          ),
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-          centerTitle: true,
+      appBar: AppBar(
+        title: Text(
+          colgname,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 30),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-                color: Colors.black, style: BorderStyle.solid, width: 1.0),
-          ),
-          child: ListView.builder(
-              itemCount: 3,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(500, 10, 500, 10),
-                  child: ListTile(
-                    hoverColor: Colors.amber,
-                    titleAlignment: ListTileTitleAlignment.center,
-                    title: Text(namelist[index]),
-                    subtitle: Text(colgname),
-                    trailing: Text('2020-24'),
-                  ),
-                );
-              }),
-        ));
+        centerTitle: true,
+      ),
+      body: ListView.builder(
+          itemCount: 3,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: EdgeInsets.fromLTRB(500, 10, 500, 10),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20))),
+                tileColor: Colors.purple,
+                titleAlignment: ListTileTitleAlignment.center,
+                title: Text(
+                  namelist[index],
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                subtitle: Text(colgname,
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                trailing: Text('2020-24',
+                    style: TextStyle(color: Colors.white, fontSize: 10)),
+              ),
+            );
+          }),
+    );
   }
 }
