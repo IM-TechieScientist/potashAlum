@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                 });
               },
               items: <String>[
-                collegename[0],
+                'College A',
                 'College B',
                 'College C'
               ] //placeholder values
