@@ -44,7 +44,7 @@ class _NewPageState extends State<NewPage> {
                 subtitle: Text(colgname,
                     style: TextStyle(color: Colors.white, fontSize: 15)),
                 trailing: Text('2020-24',
-                    style: TextStyle(color: Colors.white, fontSize: 10)),
+                    style: TextStyle(color: Colors.white, fontSize:15)),
               ),
             );
           }),
