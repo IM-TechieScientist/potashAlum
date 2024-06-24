@@ -1,4 +1,7 @@
+import 'dart:convert' as convert;
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class NewPage extends StatefulWidget {
   final String colgname;
@@ -10,11 +13,20 @@ class NewPage extends StatefulWidget {
 
 class _NewPageState extends State<NewPage> {
   String colgname;
+  List<dynamic> namelist = [];
+  List<dynamic> emaillist = [];
+  List<dynamic> linkedinlist = [];
+  List<dynamic> yearlist = [];
+  List<dynamic> collegelist = [];
   _NewPageState(this.colgname);
+  @override
+  void initState() {
+    fetchdata();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var namelist = ['kaqwla', 'amala', 'kalaa'];
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -24,60 +36,63 @@ class _NewPageState extends State<NewPage> {
         ),
         centerTitle: true,
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          double padding = constraints.maxWidth > 600 ? 500 : 16;
-          double titleFontSize = constraints.maxWidth > 600 ? 20 : 16;
-          double subtitleFontSize = constraints.maxWidth > 600 ? 15 : 12;
-          double trailingFontSize = constraints.maxWidth > 600 ? 15 : 12;
-
-          return Center(
-            child: ListView.builder(
-              itemCount: namelist.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding, vertical: 10),
-                  child: Center(
-                    child: ListTile(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      tileColor: Colors.purple,
-                      title: Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            namelist[index],
-                            style: TextStyle(color: Colors.white, fontSize: titleFontSize),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                      subtitle: Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            colgname,
-                            style: TextStyle(color: Colors.white, fontSize: subtitleFontSize),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                      trailing: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          '2020-24',
-                          style: TextStyle(color: Colors.white, fontSize: trailingFontSize),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
+      body: ListView.builder(
+          itemCount: namelist.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: EdgeInsets.fromLTRB(500, 10, 500, 10),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20))),
+                tileColor: Colors.purple,
+                titleAlignment: ListTileTitleAlignment.center,
+                title: Text(
+                  namelist[index],
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                subtitle: Text(
+                    emaillist[index] +
+                        '\n' +
+                        linkedinlist[index] +
+                        '\n' +
+                        collegelist[index],
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                trailing: Text(yearlist[index].toString(),
+                    style: TextStyle(color: Colors.white, fontSize: 15)),
+              ),
+            );
+          }),
     );
+  }
+
+  void fetchdata() async {
+    final uri = Uri.parse(
+        'https://script.google.com/macros/s/AKfycbyapoLwVQB-qG8-57L72z3zE6Hl8RS6Sx8vSef3Ua_cGf0hOb4OKu7j9y8T86VKesiwrw/exec');
+    final response = await http.get(uri);
+    final json = convert.jsonDecode(response.body);
+    var names = [];
+    var emails = [];
+    var linkedin = [];
+    var year = [];
+    var college = [];
+    print(json);
+    for (var i = 0; i < json.length - 1; i++) {
+      names += [json[i]['name']];
+      emails += [json[i]['email']];
+      linkedin += [json[i]['linked_in']];
+      year += [json[i]['year']];
+      college += [json[i]['college']];
+    }
+    setState(() {
+      namelist = names;
+      emaillist = emails;
+      linkedinlist = linkedin;
+      yearlist = year;
+      collegelist = college;
+    });
   }
 }
