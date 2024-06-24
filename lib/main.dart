@@ -27,14 +27,15 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         brightness: Brightness.light,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.blue,  //sep color scheme for appbar cuz it likes to disappear in dark mode
+          backgroundColor: Colors
+              .blue, //sep color scheme for appbar cuz it likes to disappear in dark mode
         ),
       ),
       darkTheme: ThemeData(
         primarySwatch: Colors.blue,
         brightness: Brightness.dark,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.brown, 
+          backgroundColor: Colors.brown,
         ),
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -59,7 +60,7 @@ class HomePage extends StatefulWidget {
 
     // initialize variables for daRk mode
     required this.isDarkMode,
-    required this.onThemeChanged,  
+    required this.onThemeChanged,
   });
 
   @override
@@ -96,7 +97,11 @@ class _HomePageState extends State<HomePage> {
                   selectedCollege = newValue;
                 });
               },
-              items: <String>['College A', 'College B', 'College C']  //placeholder values
+              items: <String>[
+                'College A',
+                'College B',
+                'College C'
+              ] //placeholder values
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -104,12 +109,16 @@ class _HomePageState extends State<HomePage> {
                 );
               }).toList(),
             ),
-            const SizedBox(height: 20,), //empty box for spacing betw dropdown and button
+            const SizedBox(
+              height: 20,
+            ), //empty box for spacing betw dropdown and button
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewPage()), //routing to new page
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          NewPage('$selectedCollege')), //routing to new page
                 );
               },
               child: const Text('Go to New Page'),
@@ -120,3 +129,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
