@@ -7,15 +7,16 @@ import 'package:gsheets/gsheets.dart';
 
 const _credentials = r'''
 
+
 ''';
 
-const _spreadSheetId = "1SWKS3kx5Ap3HHncPh2mTtYmbVoks2yp08YcKXeLrXl4";
+const _spreadSheetId = "1nxxrlXPPMgdu_rTe8IQ1nCwX7oTebOpA29tXR_OSP0w";
 
 void main() async {
   final gsheets = GSheets(_credentials);
   final ss = await gsheets.spreadsheet(_spreadSheetId);
   var sheet = ss.worksheetByTitle("Sheet1");
-  var listColg = await sheet!.values.column(2);
+  var listColg = await sheet!.values.column(5);
   runApp(MyApp(listColg: listColg));
 }
 
@@ -81,9 +82,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? selectedCollege;
-
+  
   @override
   Widget build(BuildContext context) {
+    Set<String> uniqueColleges = Set.from(widget.listColg);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Potash Alum Home'),
@@ -107,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                   selectedCollege = newValue;
                 });
               },
-              items: widget.listColg.map((String value) {
+              items: uniqueColleges.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
