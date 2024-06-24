@@ -81,11 +81,13 @@ class _NewPageState extends State<NewPage> {
     var college = [];
     print(json);
     for (var i = 0; i < json.length - 1; i++) {
-      names += [json[i]['name']];
-      emails += [json[i]['email']];
-      linkedin += [json[i]['linked_in']];
-      year += [json[i]['year']];
-      college += [json[i]['college']];
+      if (colgname == json[i]['college']) {
+        names += [json[i]['name']];
+        emails += [json[i]['email']];
+        linkedin += [json[i]['linked_in']];
+        year += [json[i]['year']];
+        college += [json[i]['college']];
+      }
     }
     setState(() {
       namelist = names;
