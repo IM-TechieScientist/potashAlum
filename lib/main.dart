@@ -3,14 +3,26 @@
 
 import 'package:flutter/material.dart';
 import 'pg2.dart';
+import 'package:gsheets/gsheets.dart';
 
-void main() {
-  // ignore: prefer_const_constructors
-  runApp(MyApp());
+const _credentials = r'''
+
+''';
+
+const _spreadSheetId = "1SWKS3kx5Ap3HHncPh2mTtYmbVoks2yp08YcKXeLrXl4";
+
+void main() async {
+  final gsheets = GSheets(_credentials);
+  final ss = await gsheets.spreadsheet(_spreadSheetId);
+  var sheet = ss.worksheetByTitle("Sheet1");
+  var listColg = await sheet!.values.column(2);
+  runApp(MyApp(listColg: listColg));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final List<String> listColg;
+
+  const MyApp({Key? key, required this.listColg}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -27,8 +39,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         brightness: Brightness.light,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors
-              .blue, //sep color scheme for appbar cuz it likes to disappear in dark mode
+          backgroundColor: Colors.blue,
         ),
       ),
       darkTheme: ThemeData(
@@ -46,6 +57,7 @@ class _MyAppState extends State<MyApp> {
             isDarkMode = value;
           });
         },
+        listColg: widget.listColg,
       ),
     );
   }
@@ -54,14 +66,14 @@ class _MyAppState extends State<MyApp> {
 class HomePage extends StatefulWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
+  final List<String> listColg;
 
   const HomePage({
-    super.key,
-
-    // initialize variables for daRk mode
+    Key? key,
     required this.isDarkMode,
     required this.onThemeChanged,
-  });
+    required this.listColg,
+  }) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -74,8 +86,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        // backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Potash Alum Home'),
         actions: [
           Switch(
@@ -97,12 +107,7 @@ class _HomePageState extends State<HomePage> {
                   selectedCollege = newValue;
                 });
               },
-              items: <String>[
-                'College A',
-                'College B',
-                'College C'
-              ] //placeholder values
-                  .map<DropdownMenuItem<String>>((String value) {
+              items: widget.listColg.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -111,14 +116,14 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(
               height: 20,
-            ), //empty box for spacing betw dropdown and button
+            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          NewPage('$selectedCollege')), //routing to new page
+                          NewPage('$selectedCollege')),
                 );
               },
               child: const Text('Go to New Page'),
