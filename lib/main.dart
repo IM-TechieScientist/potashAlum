@@ -72,7 +72,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? selectedCollege;
-  List<dynamic> collegename = [];
+  List<String> collegename = [];
   @override
   void initState() {
     fetchdata();
@@ -106,12 +106,7 @@ class _HomePageState extends State<HomePage> {
                   selectedCollege = newValue;
                 });
               },
-              items: <String>[
-                'College A',
-                'College B',
-                'College C'
-              ] //placeholder values
-                  .map<DropdownMenuItem<String>>((String value) {
+              items: collegename.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -144,7 +139,7 @@ class _HomePageState extends State<HomePage> {
     final response = await http.get(uri);
     final json = convert.jsonDecode(response.body);
 
-    var tempcollegelist = [];
+    List<String> tempcollegelist = [];
     for (var i = 0; i < json.length - 1; i++) {
       if (tempcollegelist.contains(json[i]['college']) == false) {
         tempcollegelist += [json[i]['college']];
