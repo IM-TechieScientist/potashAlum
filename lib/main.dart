@@ -1,31 +1,19 @@
 // main.dart
 // ignore_for_file: library_private_types_in_public_api
+import 'dart:convert' as convert;
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'pg2.dart';
-import 'package:gsheets/gsheets.dart';
 
-const _credentials = r'''
-{
+void main() {
+  // ignore: prefer_const_constructors
 
-}
-
-''';
-
-const _spreadSheetId = "1nxxrlXPPMgdu_rTe8IQ1nCwX7oTebOpA29tXR_OSP0w";
-
-void main() async {
-  final gsheets = GSheets(_credentials);
-  final ss = await gsheets.spreadsheet(_spreadSheetId);
-  var sheet = ss.worksheetByTitle("Sheet1");
-  var listColg = await sheet!.values.column(5);
-  runApp(MyApp(listColg: listColg));
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  final List<String> listColg;
-
-  const MyApp({Key? key, required this.listColg}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -42,7 +30,8 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         brightness: Brightness.light,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors
+              .blue, //sep color scheme for appbar cuz it likes to disappear in dark mode
         ),
       ),
       darkTheme: ThemeData(
@@ -60,7 +49,6 @@ class _MyAppState extends State<MyApp> {
             isDarkMode = value;
           });
         },
-        listColg: widget.listColg,
       ),
     );
   }
@@ -69,14 +57,14 @@ class _MyAppState extends State<MyApp> {
 class HomePage extends StatefulWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
-  final List<String> listColg;
 
   const HomePage({
-    Key? key,
+    super.key,
+
+    // initialize variables for daRk mode
     required this.isDarkMode,
     required this.onThemeChanged,
-    required this.listColg,
-  }) : super(key: key);
+  });
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -84,12 +72,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? selectedCollege;
-  
+  List<dynamic> collegename = [];
+  @override
+  void initState() {
+    fetchdata();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Set<String> uniqueColleges = Set.from(widget.listColg);
     return Scaffold(
       appBar: AppBar(
+        // foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        // backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Potash Alum Home'),
         actions: [
           Switch(
@@ -111,7 +106,12 @@ class _HomePageState extends State<HomePage> {
                   selectedCollege = newValue;
                 });
               },
-              items: uniqueColleges.map((String value) {
+              items: <String>[
+                collegename[0],
+                'College B',
+                'College C'
+              ] //placeholder values
+                  .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -120,14 +120,14 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(
               height: 20,
-            ),
+            ), //empty box for spacing betw dropdown and button
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          NewPage('$selectedCollege')),
+                          NewPage('$selectedCollege')), //routing to new page
                 );
               },
               child: const Text('Go to New Page'),
@@ -136,5 +136,23 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void fetchdata() async {
+    final uri = Uri.parse(
+        'https://script.google.com/macros/s/AKfycbyapoLwVQB-qG8-57L72z3zE6Hl8RS6Sx8vSef3Ua_cGf0hOb4OKu7j9y8T86VKesiwrw/exec');
+    final response = await http.get(uri);
+    final json = convert.jsonDecode(response.body);
+
+    var tempcollegelist = [];
+    for (var i = 0; i < json.length - 1; i++) {
+      if (tempcollegelist.contains(json[i]['college']) == false) {
+        tempcollegelist += [json[i]['college']];
+      }
+    }
+    print(tempcollegelist);
+    setState(() {
+      collegename = tempcollegelist;
+    });
   }
 }
